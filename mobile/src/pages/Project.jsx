@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Search, Camera, Trash, ShoppingBag } from "lucide-react";
 import axios from "axios";
+import QrScanner from "react-qr-scanner"; // Import QR Scanner
 
 const Project = () => {
   const [projectDetails, setProjectDetails] = useState({
@@ -13,6 +14,8 @@ const Project = () => {
   const [cart, setCart] = useState([]);
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScanning, setIsScanning] = useState(false); // State to toggle QR scanner visibility
+  const [scannedData, setScannedData] = useState(""); // Store the scanned data
 
   // Fetch items from backend
   useEffect(() => {
@@ -31,15 +34,15 @@ const Project = () => {
   }, []);
 
   const handleAddToCart = (item) => setCart([...cart, item]);
+
   const handleCheckout = async () => {
-    // Prepare the project data
     const projectData = {
       title: projectDetails.name,
-      manager: projectDetails.creator, // Assuming the 'manager' is the creator for now
+      manager: projectDetails.creator,
       creator: projectDetails.creator,
-      startDate: projectDetails.startDate, // You should add a startDate input in your form
-      endDate: projectDetails.endDate, // You should add an endDate input in your form
-      tools: cart.map((item) => item.name), // Get the names of the tools in the cart
+      startDate: projectDetails.startDate,
+      endDate: projectDetails.endDate,
+      tools: cart.map((item) => item.name),
     };
 
     try {
@@ -50,7 +53,7 @@ const Project = () => {
       if (response.status === 200) {
         alert("Project checkout successful!");
         setCart([]); // Clear the cart after successful checkout
-        setProjectDetails({ name: "", description: "", site: "", creator: "" }); // Clear the project details
+        setProjectDetails({ name: "", description: "", site: "", creator: "" });
       }
     } catch (error) {
       console.error("Error saving project:", error);
@@ -58,12 +61,31 @@ const Project = () => {
     }
   };
 
+  // Handle QR scan result
+  const handleScan = (data) => {
+    if (data) {
+      setScannedData(data.text);
+      setIsScanning(false); // Close the scanner after successful scan
+
+      // Find the scanned item in the inventory
+      const matchedItem = items.find((item) => item.code === data.text);
+      if (matchedItem) {
+        handleAddToCart(matchedItem);
+        alert(`Added item: ${matchedItem.name}`);
+      } else {
+        alert("Item not found in inventory.");
+      }
+    }
+  };
+
+  const handleError = (err) => {
+    console.error("QR Scanner Error:", err);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-blue-600 text-white py-4 px-6">
-        <h1 className="text-xl font-bold">Project Management</h1>
-      </div>
+      <div className="bg-blue-600 text-white py-4 px-6"></div>
 
       {/* Content */}
       <div className="flex-1 p-4 space-y-4">
@@ -166,10 +188,26 @@ const Project = () => {
         </div>
       </div>
 
-      {/* Camera Button */}
-      <button className="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full shadow-lg">
+      {/* QR Scanner Button */}
+      <button
+        onClick={() => setIsScanning(!isScanning)}
+        className="fixed bottom-4 right-4 p-4 bg-blue-500 text-white rounded-full shadow-lg"
+      >
         <Camera className="w-6 h-6" />
       </button>
+
+      {/* QR Scanner */}
+      {isScanning && (
+        <div className="bg-white p-4 rounded-lg shadow fixed top-0 left-0 right-0 bottom-0 z-50">
+          <h2 className="text-lg font-bold">Scan QR Code</h2>
+          <QrScanner
+            delay={300}
+            onError={handleError}
+            onScan={handleScan}
+            style={{ width: "100%" }}
+          />
+        </div>
+      )}
     </div>
   );
 };
