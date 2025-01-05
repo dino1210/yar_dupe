@@ -65,75 +65,75 @@ const InventoryManagement = () => {
   };
 
   const handleAddItem = async () => {
-  console.log("New Item Data Sent to Backend:", newItem);
+    console.log("New Item Data Sent to Backend:", newItem);
 
-  if (
-    !newItem.category ||
-    !newItem.subcategory ||
-    !newItem.name ||
-    !newItem.tag ||
-    !newItem.quantity ||
-    !newItem.date
-  ) {
-    alert("Please fill in all required fields.");
-    return;
-  }
-
-  try {
-    if (isEditing) {
-      const response = await axios.put(
-        `http://localhost:5000/api/inventory/${newItem.id}`,
-        newItem
-      );
-      console.log("API Response:", response);
-      if (response.status === 200) {
-        alert("Item updated successfully!");
-      }
-    } else {
-      const response = await axios.post(
-        "http://localhost:5000/api/inventory",
-        newItem
-      );
-      console.log("API Response:", response);
-      if (response.status === 201) {
-        alert("Item added successfully!");
-        setInventoryData((prev) => [response.data, ...prev]); // Add new item at the top
-      }
+    if (
+      !newItem.category ||
+      !newItem.subcategory ||
+      !newItem.name ||
+      !newItem.tag ||
+      !newItem.quantity ||
+      !newItem.date
+    ) {
+      alert("Please fill in all required fields.");
+      return;
     }
 
-    setIsModalOpen(false);
-    setIsEditing(false);
-    setNewItem({
-      category: "",
-      subcategory: "",
-      name: "",
-      tag: "",
-      quantity: "",
-      date: "",
-      remarks: "",
-    });
-  } catch (error) {
-    console.error("API Error:", error.response?.data || error.message);
-    alert("An error occurred while saving the item. Saving locally...");
+    try {
+      if (isEditing) {
+        const response = await axios.put(
+          `http://localhost:5000/api/inventory/${newItem.id}`,
+          newItem
+        );
+        console.log("API Response:", response);
+        if (response.status === 200) {
+          alert("Item updated successfully!");
+        }
+      } else {
+        const response = await axios.post(
+          "http://localhost:5000/api/inventory",
+          newItem
+        );
+        console.log("API Response:", response);
+        if (response.status === 201) {
+          alert("Item added successfully!");
+          setInventoryData((prev) => [response.data, ...prev]); // Add new item at the top
+        }
+      }
 
-    // Simulate saving locally
-    const fallbackNewItem = {
-      ...newItem,
-      id: inventoryData.length + 1,
-    };
-    setInventoryData((prev) => [fallbackNewItem, ...prev]); // Add locally saved item at the top
-    setIsModalOpen(false);
-    setNewItem({
-      category: "",
-      subcategory: "",
-      name: "",
-      tag: "",
-      quantity: "",
-      date: "",
-      remarks: "",
-    });
-  }
-};
+      setIsModalOpen(false);
+      setIsEditing(false);
+      setNewItem({
+        category: "",
+        subcategory: "",
+        name: "",
+        tag: "",
+        quantity: "",
+        date: "",
+        remarks: "",
+      });
+    } catch (error) {
+      console.error("API Error:", error.response?.data || error.message);
+      alert("An error occurred while saving the item. Saving locally...");
+
+      // Simulate saving locally
+      const fallbackNewItem = {
+        ...newItem,
+        id: inventoryData.length + 1,
+      };
+      setInventoryData((prev) => [fallbackNewItem, ...prev]); // Add locally saved item at the top
+      setIsModalOpen(false);
+      setNewItem({
+        category: "",
+        subcategory: "",
+        name: "",
+        tag: "",
+        quantity: "",
+        date: "",
+        remarks: "",
+      });
+    }
+  };
 
   const handleEditItem = (itemId) => {
     const itemToEdit = inventoryData.find((item) => item.id === itemId);
@@ -160,7 +160,7 @@ const InventoryManagement = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-1">
       <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
         {/* Top Bar */}
         <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
@@ -224,72 +224,93 @@ const InventoryManagement = () => {
 
         {/* Table Section */}
         <div className="p-6 bg-white max-h-[400px] overflow-auto">
-  <table className="w-full text-xs text-center text-gray-600 border border-gray-200">
-    {/* Sticky Header */}
-    <thead className="sticky top-0 bg-white z-10">
-      <tr>
-        <th className="border border-gray-300 px-6 py-3">Category</th>
-        <th className="border border-gray-300 px-6 py-3">Subcategory</th>
-        <th className="border border-gray-300 px-6 py-3">Name</th>
-        <th className="border border-gray-300 px-6 py-3">Tag/Code</th>
-        <th className="border border-gray-300 px-6 py-3">Quantity</th>
-        <th className="border border-gray-300 px-6 py-3">Date</th>
-        <th className="border border-gray-300 px-6 py-3">Remarks</th>
-        <th className="border border-gray-300 px-6 py-3">Actions</th>
-      </tr>
-    </thead>
+          <table className="w-full text-xs text-center text-gray-600 border border-gray-200">
+            {/* Sticky Header */}
+            <thead className="sticky top-0 bg-white z-10">
+              <tr>
+                <th className="border border-gray-300 px-6 py-3">Category</th>
+                <th className="border border-gray-300 px-6 py-3">
+                  Subcategory
+                </th>
+                <th className="border border-gray-300 px-6 py-3">Name</th>
+                <th className="border border-gray-300 px-6 py-3">Tag/Code</th>
+                <th className="border border-gray-300 px-6 py-3">Quantity</th>
+                <th className="border border-gray-300 px-6 py-3">Date</th>
+                <th className="border border-gray-300 px-6 py-3">Remarks</th>
+                <th className="border border-gray-300 px-6 py-3">Actions</th>
+              </tr>
+            </thead>
 
-    {/* Table Body */}
-    <tbody>
-      {inventoryData.length > 0 ? (
-        inventoryData.map((item) => {
-          const categoryName =
-            categories.find((category) => String(category.id) === String(item.category))?.name || "Unknown Category";
-          const subcategoryName =
-            subcategories.find((subcategory) => String(subcategory.id) === String(item.subcategory))?.name ||
-            "Unknown Subcategory";
+            {/* Table Body */}
+            <tbody>
+              {inventoryData.length > 0 ? (
+                inventoryData.map((item) => {
+                  const categoryName =
+                    categories.find(
+                      (category) =>
+                        String(category.id) === String(item.category)
+                    )?.name || "Unknown Category";
+                  const subcategoryName =
+                    subcategories.find(
+                      (subcategory) =>
+                        String(subcategory.id) === String(item.subcategory)
+                    )?.name || "Unknown Subcategory";
 
-          return (
-            <tr key={item.id} className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-6 py-3">{categoryName}</td>
-              <td className="border border-gray-300 px-6 py-3">{subcategoryName}</td>
-              <td className="border border-gray-300 px-6 py-3">{item.name}</td>
-              <td className="border border-gray-300 px-6 py-3">{item.tag}</td>
-              <td className="border border-gray-300 px-6 py-3">{item.quantity}</td>
-              <td className="border border-gray-300 px-6 py-3">{item.date}</td>
-              <td className="border border-gray-300 px-6 py-3">{item.remarks}</td>
-              <td className="border border-gray-300 px-6 py-3">
-                <div className="flex justify-center space-x-2">
-                  <button
-                    onClick={() => handleEditItem(item.id)}
-                    className="text-blue-600 hover:text-blue-800"
+                  return (
+                    <tr key={item.id} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 px-6 py-3">
+                        {categoryName}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {subcategoryName}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {item.name}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {item.tag}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {item.quantity}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {item.date}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        {item.remarks}
+                      </td>
+                      <td className="border border-gray-300 px-6 py-3">
+                        <div className="flex justify-center space-x-2">
+                          <button
+                            onClick={() => handleEditItem(item.id)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteItem(item.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td
+                    colSpan="8"
+                    className="border border-gray-300 px-6 py-3 text-center"
                   >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteItem(item.id)}
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          );
-        })
-      ) : (
-        <tr>
-          <td colSpan="8" className="border border-gray-300 px-6 py-3 text-center">
-            No items found.
-          </td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</div>
-
-
-
+                    No items found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal Section */}
@@ -301,7 +322,9 @@ const InventoryManagement = () => {
             </h2>
             <form>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Category</label>
+                <label className="block text-sm font-medium mb-1">
+                  Category
+                </label>
                 <select
                   name="category"
                   value={newItem.category}
@@ -318,7 +341,9 @@ const InventoryManagement = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Subcategory</label>
+                <label className="block text-sm font-medium mb-1">
+                  Subcategory
+                </label>
                 <select
                   name="subcategory"
                   value={newItem.subcategory}
@@ -347,7 +372,9 @@ const InventoryManagement = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Tag/Code</label>
+                <label className="block text-sm font-medium mb-1">
+                  Tag/Code
+                </label>
                 <input
                   type="text"
                   name="tag"
@@ -359,7 +386,9 @@ const InventoryManagement = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Quantity</label>
+                <label className="block text-sm font-medium mb-1">
+                  Quantity
+                </label>
                 <input
                   type="number"
                   name="quantity"
@@ -382,7 +411,9 @@ const InventoryManagement = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Remarks</label>
+                <label className="block text-sm font-medium mb-1">
+                  Remarks
+                </label>
                 <textarea
                   name="remarks"
                   value={newItem.remarks}
@@ -429,4 +460,3 @@ const InventoryManagement = () => {
 };
 
 export default InventoryManagement;
-

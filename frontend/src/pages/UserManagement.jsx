@@ -1,7 +1,43 @@
 import React, { useState } from "react";
 
 const UserManagement = () => {
-  const [userData, setUserData] = useState([]);
+  const [userData, setUserData] = useState([
+    {
+      id: 1,
+      username: "nolly",
+      email: "nolly@gmail.com",
+      role: "Admin",
+      status: "Active",
+    },
+    {
+      id: 2,
+      username: "angelo",
+      email: "angelo@gmail.com",
+      role: "User",
+      status: "Active",
+    },
+    {
+      id: 3,
+      username: "ronald",
+      email: "ronald@gmail.com",
+      role: "User",
+      status: "Inactive",
+    },
+    {
+      id: 4,
+      username: "edan",
+      email: "edan@gmail.com",
+      role: "Admin",
+      status: "Inactive",
+    },
+    {
+      id: 5,
+      username: "jestro",
+      email: "jestro@gmail.com",
+      role: "User",
+      status: "Active",
+    },
+  ]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +55,12 @@ const UserManagement = () => {
   };
 
   const handleAddUser = () => {
-    if (!newUser.username || !newUser.email || !newUser.role || !newUser.status) {
+    if (
+      !newUser.username ||
+      !newUser.email ||
+      !newUser.role ||
+      !newUser.status
+    ) {
       alert("Please complete all fields before adding a user.");
       return;
     }
@@ -47,7 +88,12 @@ const UserManagement = () => {
   };
 
   const handleUpdateUser = () => {
-    if (!newUser.username || !newUser.email || !newUser.role || !newUser.status) {
+    if (
+      !newUser.username ||
+      !newUser.email ||
+      !newUser.role ||
+      !newUser.status
+    ) {
       alert("Please complete all fields before updating the user.");
       return;
     }
@@ -62,7 +108,9 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = (id) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
     if (confirmDelete) {
       setUserData((prev) => prev.filter((user) => user.id !== id));
       alert("User deleted successfully!");
@@ -122,14 +170,24 @@ const UserManagement = () => {
               {userData.length > 0 ? (
                 userData
                   .filter((user) =>
-                    user.username.toLowerCase().includes(searchTerm.toLowerCase())
+                    user.username
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase())
                   )
                   .map((user) => (
                     <tr key={user.id}>
-                      <td className="border border-gray-200 px-6 py-3">{user.username}</td>
-                      <td className="border border-gray-200 px-6 py-3">{user.email}</td>
-                      <td className="border border-gray-200 px-6 py-3">{user.role}</td>
-                      <td className="border border-gray-200 px-6 py-3">{user.status}</td>
+                      <td className="border border-gray-200 px-6 py-3">
+                        {user.username}
+                      </td>
+                      <td className="border border-gray-200 px-6 py-3">
+                        {user.email}
+                      </td>
+                      <td className="border border-gray-200 px-6 py-3">
+                        {user.role}
+                      </td>
+                      <td className="border border-gray-200 px-6 py-3">
+                        {user.status}
+                      </td>
                       <td className="border border-gray-200 px-6 py-3 space-x-2">
                         <button
                           className="bg-green-600 text-white px-2 py-1 rounded-md text-xs hover:bg-green-700"
@@ -169,7 +227,9 @@ const UserManagement = () => {
               </h2>
               <form>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Username</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Username
+                  </label>
                   <input
                     type="text"
                     name="username"
@@ -179,7 +239,9 @@ const UserManagement = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Email</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Email
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -202,7 +264,9 @@ const UserManagement = () => {
                   </select>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Status</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Status
+                  </label>
                   <select
                     name="status"
                     value={newUser.status}

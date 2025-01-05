@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Edit2, Trash2 } from "lucide-react";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -134,7 +135,7 @@ const Categories = () => {
     <div className="min-h-screen p-1">
       <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
         {/* Action Header */}
-        <div className="p-6 bg-white flex justify-between items-center border-b z-20">
+        <div className=" bg-white flex justify-between items-center border-b z-20">
           <div className="flex space-x-4">
             <input
               type="text"
@@ -209,16 +210,18 @@ const Categories = () => {
                     </td>
                     <td className="border border-gray-200 px-6 py-3">
                       <button
-                        className="text-yellow-500 text-xs mr-2"
+                        className="text-yellow-500 mr-2"
                         onClick={() => handleOpenModal(category)}
+                        title="Edit Subcategories"
                       >
-                        Edit Subcategories
+                        <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        className="text-red-500 text-xs"
+                        className="text-red-500"
                         onClick={() => handleDeleteCategory(category.name)}
+                        title="Delete Category"
                       >
-                        Delete Category
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>
@@ -240,19 +243,19 @@ const Categories = () => {
         {/* Modal */}
         {isModalOpen && editingCategory && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white p-8 rounded-lg max-w-lg w-full">
+            <div className="bg-white rounded-lg w-96 max-h-[90vh] p-6 flex flex-col overflow-hidden">
               <h3 className="text-lg font-semibold mb-4">
                 Edit Subcategories for {editingCategory.name}
               </h3>
 
-              {/* Display Existing Subcategories */}
-              <div className="space-y-2 mb-4">
+              {/* Scrollable Subcategories Section */}
+              <div className="flex-1 overflow-y-auto space-y-2 mb-4">
                 {editingCategory.subcategories.map((sub, index) => (
                   <div
                     key={index}
                     className="flex justify-between items-center"
                   >
-                    <span>{sub}</span>
+                    <span className="text-sm">{sub}</span>
                     <button
                       className="text-red-500 text-xs"
                       onClick={() => handleDeleteSubcategoryInModal(sub)}
@@ -264,31 +267,32 @@ const Categories = () => {
               </div>
 
               {/* Add New Subcategory */}
-              <div className="flex space-x-4 mb-4">
+              <div className="space-y-4 mb-4">
                 <input
                   type="text"
                   placeholder="New Subcategory Name"
-                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 mr-4"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 w-full"
                   value={newSubcategoryInModal}
                   onChange={(e) => setNewSubcategoryInModal(e.target.value)}
                 />
                 <button
-                  className="bg-green-600 text-white px-4 py-2 rounded-md text-xs hover:bg-green-700"
+                  className="bg-green-600 text-white px-4 py-2 rounded-md text-xs w-full hover:bg-green-700"
                   onClick={handleAddSubcategoryInModal}
                 >
                   Add Subcategory
                 </button>
               </div>
 
+              {/* Modal Actions */}
               <div className="flex justify-between">
                 <button
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-xs hover:bg-blue-700"
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-xs hover:bg-gray-400"
                   onClick={handleCloseModal}
                 >
                   Close
                 </button>
                 <button
-                  className="bg-green-600 text-white px-4 py-2 rounded-md text-xs hover:bg-green-700"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md text-xs hover:bg-blue-700"
                   onClick={handleCloseModal}
                 >
                   Save Changes
