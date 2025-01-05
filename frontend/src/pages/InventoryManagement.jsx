@@ -65,76 +65,75 @@ const InventoryManagement = () => {
   };
 
   const handleAddItem = async () => {
-    console.log("New Item Data Sent to Backend:", newItem);
+  console.log("New Item Data Sent to Backend:", newItem);
 
-    if (
-      !newItem.category ||
-      !newItem.subcategory ||
-      !newItem.name ||
-      !newItem.tag ||
-      !newItem.quantity ||
-      !newItem.date
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
+  if (
+    !newItem.category ||
+    !newItem.subcategory ||
+    !newItem.name ||
+    !newItem.tag ||
+    !newItem.quantity ||
+    !newItem.date
+  ) {
+    alert("Please fill in all required fields.");
+    return;
+  }
 
-    try {
-      if (isEditing) {
-        const response = await axios.put(
-          `http://localhost:5000/api/inventory/${newItem.id}`,
-          newItem
-        );
-        console.log("API Response:", response);
-        if (response.status === 200) {
-          alert("Item updated successfully!");
-        }
-      } else {
-        const response = await axios.post(
-          "http://localhost:5000/api/inventory",
-          newItem
-        );
-        console.log("API Response:", response);
-        if (response.status === 201) {
-          alert("Item added successfully!");
-        }
+  try {
+    if (isEditing) {
+      const response = await axios.put(
+        `http://localhost:5000/api/inventory/${newItem.id}`,
+        newItem
+      );
+      console.log("API Response:", response);
+      if (response.status === 200) {
+        alert("Item updated successfully!");
       }
-
-      setIsModalOpen(false);
-      setIsEditing(false);
-      setNewItem({
-        category: "",
-        subcategory: "",
-        name: "",
-        tag: "",
-        quantity: "",
-        date: "",
-        remarks: "",
-      });
-      fetchInventory();
-    } catch (error) {
-      console.error("API Error:", error.response?.data || error.message);
-      alert("An error occurred while saving the item. Saving locally...");
-
-      // Simulate saving locally
-      const fallbackNewItem = {
-        ...newItem,
-        id: inventoryData.length + 1,
-      };
-      setInventoryData((prev) => [...prev, fallbackNewItem]);
-
-      setIsModalOpen(false);
-      setNewItem({
-        category: "",
-        subcategory: "",
-        name: "",
-        tag: "",
-        quantity: "",
-        date: "",
-        remarks: "",
-      });
+    } else {
+      const response = await axios.post(
+        "http://localhost:5000/api/inventory",
+        newItem
+      );
+      console.log("API Response:", response);
+      if (response.status === 201) {
+        alert("Item added successfully!");
+        setInventoryData((prev) => [response.data, ...prev]); // Add new item at the top
+      }
     }
-  };
+
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setNewItem({
+      category: "",
+      subcategory: "",
+      name: "",
+      tag: "",
+      quantity: "",
+      date: "",
+      remarks: "",
+    });
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+    alert("An error occurred while saving the item. Saving locally...");
+
+    // Simulate saving locally
+    const fallbackNewItem = {
+      ...newItem,
+      id: inventoryData.length + 1,
+    };
+    setInventoryData((prev) => [fallbackNewItem, ...prev]); // Add locally saved item at the top
+    setIsModalOpen(false);
+    setNewItem({
+      category: "",
+      subcategory: "",
+      name: "",
+      tag: "",
+      quantity: "",
+      date: "",
+      remarks: "",
+    });
+  }
+};
 
   const handleEditItem = (itemId) => {
     const itemToEdit = inventoryData.find((item) => item.id === itemId);
@@ -224,60 +223,73 @@ const InventoryManagement = () => {
         </div>
 
         {/* Table Section */}
-        <div className="p-6 bg-white max-h-[395px] overflow-auto">
-          <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
-            <thead className="sticky top-0 bg-white z-10">
-              <tr>
-                <th className="border border-gray-200 px-6 py-3 w-24">Category</th>
-                <th className="border border-gray-200 px-6 py-3 w-24">Subcategory</th>
-                <th className="border border-gray-200 px-6 py-3 w-32">Name</th>
-                <th className="border border-gray-200 px-6 py-3 w-32">Tag/Code</th>
-                <th className="border border-gray-200 px-6 py-3 w-20">Quantity</th>
-                <th className="border border-gray-200 px-6 py-3 w-28">Date</th>
-                <th className="border border-gray-200 px-6 py-3 w-40">Remarks</th>
-                <th className="border border-gray-200 px-6 py-3 w-20">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {inventoryData.length > 0 ? (
-                inventoryData.map((item) => (
-                  <tr key={item.id}>
-                    <td className="border border-gray-200 px-6 py-3">{item.category}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.subcategory}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.name}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.tag}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.quantity}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.date}</td>
-                    <td className="border border-gray-200 px-6 py-3">{item.remarks}</td>
-                    <td className="border border-gray-200 px-6 py-3 flex justify-center space-x-2">
-                      <button
-                        onClick={() => handleEditItem(item.id)}
-                        className="text-blue-600 hover:text-blue-800"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteItem(item.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="8"
-                    className="border border-gray-200 px-6 py-3 text-center"
+        <div className="p-6 bg-white max-h-[400px] overflow-auto">
+  <table className="w-full text-xs text-center text-gray-600 border border-gray-200">
+    {/* Sticky Header */}
+    <thead className="sticky top-0 bg-white z-10">
+      <tr>
+        <th className="border border-gray-300 px-6 py-3">Category</th>
+        <th className="border border-gray-300 px-6 py-3">Subcategory</th>
+        <th className="border border-gray-300 px-6 py-3">Name</th>
+        <th className="border border-gray-300 px-6 py-3">Tag/Code</th>
+        <th className="border border-gray-300 px-6 py-3">Quantity</th>
+        <th className="border border-gray-300 px-6 py-3">Date</th>
+        <th className="border border-gray-300 px-6 py-3">Remarks</th>
+        <th className="border border-gray-300 px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+
+    {/* Table Body */}
+    <tbody>
+      {inventoryData.length > 0 ? (
+        inventoryData.map((item) => {
+          const categoryName =
+            categories.find((category) => String(category.id) === String(item.category))?.name || "Unknown Category";
+          const subcategoryName =
+            subcategories.find((subcategory) => String(subcategory.id) === String(item.subcategory))?.name ||
+            "Unknown Subcategory";
+
+          return (
+            <tr key={item.id} className="hover:bg-gray-50">
+              <td className="border border-gray-300 px-6 py-3">{categoryName}</td>
+              <td className="border border-gray-300 px-6 py-3">{subcategoryName}</td>
+              <td className="border border-gray-300 px-6 py-3">{item.name}</td>
+              <td className="border border-gray-300 px-6 py-3">{item.tag}</td>
+              <td className="border border-gray-300 px-6 py-3">{item.quantity}</td>
+              <td className="border border-gray-300 px-6 py-3">{item.date}</td>
+              <td className="border border-gray-300 px-6 py-3">{item.remarks}</td>
+              <td className="border border-gray-300 px-6 py-3">
+                <div className="flex justify-center space-x-2">
+                  <button
+                    onClick={() => handleEditItem(item.id)}
+                    className="text-blue-600 hover:text-blue-800"
                   >
-                    No items found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          );
+        })
+      ) : (
+        <tr>
+          <td colSpan="8" className="border border-gray-300 px-6 py-3 text-center">
+            No items found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+
+
       </div>
 
       {/* Modal Section */}
@@ -417,3 +429,4 @@ const InventoryManagement = () => {
 };
 
 export default InventoryManagement;
+
