@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+toast.configure();
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -8,19 +12,22 @@ const Projects = () => {
   // Fetch projects from backend API
   const fetchProjects = async () => {
     try {
+      toast.info("Fetching projects...");
       const response = await fetch("http://localhost:5000/api/projects");
       if (!response.ok) {
         throw new Error("Failed to fetch projects");
       }
       const data = await response.json();
-      setProjects(data); // Set the projects state with fetched data
+      setProjects(data);
+      toast.success("Projects loaded successfully!");
     } catch (error) {
+      toast.error("Error fetching projects.");
       console.error("Error fetching projects:", error.message);
     }
   };
 
   useEffect(() => {
-    fetchProjects(); // Fetch projects when component mounts
+    fetchProjects();
   }, []);
 
   const toggleExpand = (projectId) => {
@@ -37,7 +44,7 @@ const Projects = () => {
         {/* Left Container (Project List) */}
         <div className="w-full sm:w-2/3 lg:w-3/4 p-6 space-y-4">
           <div className="border-b pb-4">
-            <h2 className="text-xl font-sm text-gray-700">Projects</h2>
+            <h2 className="text-xl font-semibold text-gray-700">Projects</h2>
           </div>
 
           <div className="space-y-4 max-h-[350px] overflow-y-auto">
@@ -46,7 +53,7 @@ const Projects = () => {
                 key={project.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-300"
               >
-                {/* Collapsed View with Title, Creator, and Dates */}
+                {/* Collapsed View */}
                 <div
                   className="p-4 cursor-pointer flex justify-between items-center hover:bg-gray-100"
                   onClick={() => toggleExpand(project.id)}
@@ -66,15 +73,17 @@ const Projects = () => {
                   <span>{expandedProject === project.id ? "▲" : "▼"}</span>
                 </div>
 
-                {/* Expanded View with Additional Details */}
+                {/* Expanded View */}
                 {expandedProject === project.id && (
                   <div className="flex p-4 space-x-8">
                     <div className="w-2/3 space-y-4">
-                      <div>
-                        <p className="text-gray-700 font-medium">
-                          <strong>Manager:</strong> {project.manager}
-                        </p>
-                      </div>
+                      <p className="text-gray-700 font-medium">
+                        <strong>Manager:</strong> {project.manager}
+                      </p>
+                      <p className="text-gray-700 font-medium">
+                        <strong>Person in Charge:</strong>{" "}
+                        {project.personInCharge || "Not Assigned"}
+                      </p>
                     </div>
 
                     <div className="w-1/3">
@@ -82,9 +91,16 @@ const Projects = () => {
                         <strong>Tools/Equipment Used:</strong>
                       </p>
                       <ul className="list-disc pl-5 text-gray-600">
-                        {JSON.parse(project.tools).map((tool, index) => (
-                          <li key={index}>{tool}</li>
-                        ))}
+                        {(() => {
+                          try {
+                            return JSON.parse(project.tools).map(
+                              (tool, index) => <li key={index}>{tool}</li>
+                            );
+                          } catch (error) {
+                            console.error("Error parsing tools:", error);
+                            return <li>Error loading tools</li>;
+                          }
+                        })()}
                       </ul>
                     </div>
                   </div>
@@ -94,7 +110,7 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* Right Container (Search Bar and Filters) */}
+        {/* Right Container (Search Bar) */}
         <div className="w-full sm:w-1/3 lg:w-1/4 p-6 h-full">
           <div className="p-6 bg-white shadow-md rounded-lg h-full flex flex-col justify-between">
             <h3 className="text-sm font-medium text-gray-700">
