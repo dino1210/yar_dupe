@@ -262,19 +262,17 @@ const Check = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const headers = {
-    All: [
-      { label: "Category", key: "category" },
-      { label: "Name", key: "name" },
-      { label: "Tag", key: "tag" },
-      { label: "Checked Out By", key: "checkedOutBy" },
-      { label: "Checked Out Date", key: "checkedOutDate" },
-      { label: "Project Site", key: "projectSite" },
-      { label: "Use Start Date", key: "useStartDate" },
-      { label: "Use End Date", key: "useEndDate" },
-      { label: "Status", key: "status" },
-    ],
-  };
+  const headers = [
+    { label: "Category", key: "category" },
+    { label: "Name", key: "name" },
+    { label: "Tag", key: "tag" },
+    { label: "Checked Out By", key: "checkedOutBy" },
+    { label: "Checked Out Date", key: "checkedOutDate" },
+    { label: "Project Site", key: "projectSite" },
+    { label: "Use Start Date", key: "useStartDate" },
+    { label: "Use End Date", key: "useEndDate" },
+    { label: "Status", key: "status" }
+  ];
 
   const filteredData = inventoryData.filter(
     (item) =>
@@ -284,79 +282,87 @@ const Check = () => {
   );
 
   return (
-    <div className="min-h-screen p-4">
-      <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg">
-        {/* Top Bar */}
-        <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
-          <div className="flex space-x-4">
-            {/* Category Dropdown */}
-            <select
-              className="bg-gray-50 border border-gray-300 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="All">All Categories</option>
-              <option value="Tools/Equipment">Tools/Equipment</option>
-              <option value="Consumables">Consumables</option>
-            </select>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-start p-6">
+  <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6">
+    
+    {/* Top Bar */}
+    <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
+      <div className="flex space-x-4">
+        {/* Category Dropdown */}
+        <select
+          className="bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="All">All Categories</option>
+          <option value="Tools/Equipment">Tools/Equipment</option>
+          <option value="Consumables">Consumables</option>
+        </select>
 
-            {/* Search Input */}
-            <input
-              type="text"
-              placeholder="Search items..."
-              className="w-60 bg-gray-50 border border-gray-300 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Table Section */}
-        <div className="p-6 bg-white max-h-[395px] overflow-y-auto">
-          <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
-            <thead className="sticky top-0 z-10 bg-white">
-              <tr>
-                {/* Render dynamic headers */}
-                {headers.All.map((header, idx) => (
-                  <th
-                    key={idx}
-                    className="border border-gray-200 px-6 py-3 text-xs text-gray-600"
-                  >
-                    {header.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item, idx) => (
-                  <tr key={idx}>
-                    {/* Render data */}
-                    {headers.All.map((header, index) => (
-                      <td
-                        key={index}
-                        className="border border-gray-200 px-6 py-3 text-xs text-gray-600"
-                      >
-                        {item[header.key] || "-"}
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={headers.All.length}
-                    className="border border-gray-200 px-6 py-3 text-center text-xs text-gray-600"
-                  >
-                    No data found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Search items..."
+          className="w-60 bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
     </div>
+
+    {/* Table Section */}
+    <div className="overflow-auto max-h-[500px] w-full">
+      <table className="w-full border-collapse table-fixed text-sm text-gray-600">
+        
+        {/* Table Headers */}
+        <thead className="sticky top-0 z-10 bg-gray-100 shadow-md">
+          <tr>
+            {headers.map((header, idx) => (
+              <th
+                key={idx}
+                className="border border-gray-200 px-6 py-3 text-xs font-semibold text-gray-700 text-center"
+                style={{ minWidth: "150px", whiteSpace: "nowrap" }}
+              >
+                {header.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        {/* Table Body */}
+        <tbody>
+          {filteredData.length > 0 ? (
+            filteredData.map((item, idx) => (
+              <tr key={idx} className="hover:bg-gray-50">
+                {headers.map((header, index) => (
+                  <td
+                    key={index}
+                    className="border border-gray-200 px-6 py-3 text-xs text-gray-700 text-center align-middle"
+                    style={{ minWidth: "150px", wordBreak: "break-word" }}
+                  >
+                    {item[header.key] || "-"}
+                  </td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={headers.length}
+                className="border border-gray-200 px-6 py-3 text-center text-xs text-gray-700"
+              >
+                No data found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+    
   );
 };
 

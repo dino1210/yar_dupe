@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-toast.configure();
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
   const [expandedProject, setExpandedProject] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Fetch projects from backend API
   const fetchProjects = async () => {
     try {
       toast.info("Fetching projects...");
@@ -40,6 +37,7 @@ const Projects = () => {
 
   return (
     <div className="min-h-screen p-1 overflow-x-hidden">
+      <ToastContainer />
       <div className="max-w-7xl mx-auto flex flex-wrap shadow-lg rounded-lg overflow-hidden bg-white">
         {/* Left Container (Project List) */}
         <div className="w-full sm:w-2/3 lg:w-3/4 p-6 space-y-4">
@@ -53,7 +51,6 @@ const Projects = () => {
                 key={project.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-300"
               >
-                {/* Collapsed View */}
                 <div
                   className="p-4 cursor-pointer flex justify-between items-center hover:bg-gray-100"
                   onClick={() => toggleExpand(project.id)}
@@ -73,7 +70,6 @@ const Projects = () => {
                   <span>{expandedProject === project.id ? "▲" : "▼"}</span>
                 </div>
 
-                {/* Expanded View */}
                 {expandedProject === project.id && (
                   <div className="flex p-4 space-x-8">
                     <div className="w-2/3 space-y-4">
@@ -124,7 +120,7 @@ const Projects = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-        </div>
+        </div>  
       </div>
     </div>
   );
