@@ -9,7 +9,7 @@ const InventoryManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  // 🔥 Empty default item
+  
   const defaultNewItem = {
     category: "",
     name: "",
@@ -25,7 +25,7 @@ const InventoryManagement = () => {
 
   const [newItem, setNewItem] = useState(defaultNewItem);
 
-  // ✅ Fetch Inventory Data (No Default Values)
+ 
   const fetchInventory = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/inventory");
@@ -36,7 +36,7 @@ const InventoryManagement = () => {
     }
   };
 
-  // ✅ Fetch Categories
+  
   const fetchCategories = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/categories");
@@ -79,9 +79,9 @@ const InventoryManagement = () => {
         const newItemWithId = { ...newItem, id: newId };
         setInventoryData((prev) => [newItemWithId, ...prev]);
         alert("Item added successfully!");
-      }
+      } 
 
-      // Close modal and reset form (🔥 Empty values now!)
+      // Close modal and reset form ( Empty values now!)
       setIsModalOpen(false);
       setIsEditing(false);
       setNewItem(defaultNewItem);
@@ -133,7 +133,7 @@ const InventoryManagement = () => {
           <button
             onClick={() => {
               setIsEditing(false);
-              setNewItem(defaultNewItem); // 🔥 Reset to empty values
+              setNewItem(defaultNewItem); //  Reset to empty values
               setIsModalOpen(true);
             }}
             className="bg-blue-600 text-white px-4 py-2 rounded-md text-xs hover:bg-blue-700"
@@ -146,11 +146,11 @@ const InventoryManagement = () => {
         <div className="p-6 bg-white w-full">
   <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
     
-    {/* 🛠️ Table Wrapper with No Text Cutoff */}
+    {/*  Table Wrapper with No Text Cutoff */}
     <div className="overflow-y-auto max-h-[600px] w-full">
       <table className="w-full border-collapse table-fixed text-sm text-left text-gray-600">
         
-        {/* 🔥 Sticky Table Headers with Proper Spacing */}
+        {/*  Sticky Table Headers with Proper Spacing */}
         <thead className="sticky top-0 bg-gray-200 text-gray-700 uppercase text-xs font-semibold z-10">
           <tr>
             {[
@@ -177,7 +177,7 @@ const InventoryManagement = () => {
           </tr>
         </thead>
 
-        {/* 🛠️ Scrollable Table Body (No Text Cutoff) */}
+        {/*  Scrollable Table Body (No Text Cutoff) */}
         <tbody>
           {inventoryData.length > 0 ? (
             inventoryData.map((item) => (
