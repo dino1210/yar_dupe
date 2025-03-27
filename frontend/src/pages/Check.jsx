@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { format } from "date-fns";
+import { CSVLink } from "react-csv";
 
 const Check = () => {
   const [inventoryData] = useState([
@@ -258,7 +260,6 @@ const Check = () => {
       status: "Checked In",
     },
   ]);
-
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -274,6 +275,26 @@ const Check = () => {
     { label: "Status", key: "status" }
   ];
 
+  const formatDate = (dateStr) => {
+    try {
+      return format(new Date(dateStr), "MMM dd, yyyy");
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const highlightText = (text, search) => {
+    if (!search) return text;
+    const parts = text.split(new RegExp(`(${search})`, "gi"));
+    return parts.map((part, i) =>
+      part.toLowerCase() === search.toLowerCase() ? (
+        <span key={i} className="bg-yellow-200 font-semibold">{part}</span>
+      ) : (
+        part
+      )
+    );
+  };
+
   const filteredData = inventoryData.filter(
     (item) =>
       (selectedCategory === "All" || item.category === selectedCategory) &&
@@ -283,86 +304,124 @@ const Check = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start p-6">
-  <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6">
-    
-    {/* Top Bar */}
-    <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
-      <div className="flex space-x-4">
-        {/* Category Dropdown */}
-        <select
-          className="bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="All">All Categories</option>
-          <option value="Tools/Equipment">Tools/Equipment</option>
-          <option value="Consumables">Consumables</option>
-        </select>
+      <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6">
 
-        {/* Search Input */}
-        <input
-          type="text"
-          placeholder="Search items..."
-          className="w-60 bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-    </div>
+        {/* Top Bar */}
+        <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center flex-wrap gap-2">
+          <div className="flex flex-wrap space-x-2 items-center">
+            {/* Category Dropdown */}
+            <select
+              className="bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              <option value="All">All Categories</option>
+              <option value="Tools/Equipment">Tools/Equipment</option>
+              <option value="Consumables">Consumables</option>
+            </select>
 
-    {/* Table Section */}
-    <div className="overflow-auto max-h-[500px] w-full">
-      <table className="w-full border-collapse table-fixed text-sm text-gray-600">
-        
-        {/* Table Headers */}
-        <thead className="sticky top-0 z-10 bg-gray-100 shadow-md">
-          <tr>
-            {headers.map((header, idx) => (
-              <th
-                key={idx}
-                className="border border-gray-200 px-6 py-3 text-xs font-semibold text-gray-700 text-center"
-                style={{ minWidth: "150px", whiteSpace: "nowrap" }}
-              >
-                {header.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
+            {/* Search Input */}
+            <input
+              type="text"
+              placeholder="Search items..."
+              className="w-60 bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-        {/* Table Body */}
-        <tbody>
-          {filteredData.length > 0 ? (
-            filteredData.map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50">
-                {headers.map((header, index) => (
-                  <td
-                    key={index}
-                    className="border border-gray-200 px-6 py-3 text-xs text-gray-700 text-center align-middle"
-                    style={{ minWidth: "150px", wordBreak: "break-word" }}
+          {/* Export Button */}
+          <CSVLink
+            data={filteredData}
+            headers={headers}
+            filename="checkin_checkout_data.csv"
+            className="bg-blue-500 text-white px-4 py-2 rounded text-xs hover:bg-blue-600"
+          >
+            Export CSV
+          </CSVLink>
+        </div>
+
+        {/* Table Section */}
+        {/* Table Section */}
+<div className="overflow-auto mt-4 max-h-[500px]">
+  <table className="min-w-[1000px] w-full border-collapse text-sm text-gray-600">
+    <thead className="sticky top-0 z-10 bg-gray-200 text-gray-800 shadow-md">
+  <tr>
+    {headers.map((header, idx) => (
+      <th
+        key={idx}
+        className="border border-gray-300 px-6 py-3 text-xs font-semibold text-center"
+        style={{ whiteSpace: "nowrap" }}
+      >
+        {header.label}
+      </th>
+    ))}
+  </tr>
+</thead>
+
+    <tbody>
+      {filteredData.length > 0 ? (
+        filteredData.map((item, idx) => (
+          <tr key={idx} className="hover:bg-gray-50">
+            {headers.map((header, index) => {
+              const value = item[header.key];
+              let content = value;
+
+              if (
+                ["checkedOutDate", "useStartDate", "useEndDate"].includes(
+                  header.key
+                )
+              ) {
+                content = formatDate(value);
+              }
+
+              if (["name", "tag"].includes(header.key)) {
+                content = highlightText(value, searchTerm);
+              }
+
+              if (header.key === "status") {
+                content = (
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      value === "Checked In"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
                   >
-                    {item[header.key] || "-"}
-                  </td>
-                ))}
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td
-                colSpan={headers.length}
-                className="border border-gray-200 px-6 py-3 text-center text-xs text-gray-700"
-              >
-                No data found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+                    {value}
+                  </span>
+                );
+              }
 
-  </div>
+              return (
+                <td
+                  key={index}
+                  className="border border-gray-200 px-6 py-3 text-xs text-gray-700 text-center align-middle"
+                  style={{ wordBreak: "break-word" }}
+                >
+                  {content || "-"}
+                </td>
+              );
+            })}
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td
+            colSpan={headers.length}
+            className="border border-gray-200 px-6 py-3 text-center text-xs text-gray-700"
+          >
+            No data found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
 </div>
 
-    
+
+      </div>
+    </div>
   );
 };
 

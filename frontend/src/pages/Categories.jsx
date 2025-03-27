@@ -11,7 +11,7 @@ const Categories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch categories from the backend
+  // Fetch categories
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/categories")
@@ -19,28 +19,37 @@ const Categories = () => {
       .catch((error) => console.error("Error fetching categories:", error));
   }, []);
 
-  // Add a new category
+  const toTitleCase = (str) =>
+    str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+
+  // Add Category
   const handleAddCategory = () => {
-    if (newCategory.trim() !== "") {
+    const formatted = toTitleCase(newCategory.trim());
+    if (formatted !== "") {
       axios
-        .post("http://localhost:5000/api/categories", { name: newCategory })
+        .post("http://localhost:5000/api/categories", { name: formatted })
         .then(() => {
-          setCategories([
-            ...categories,
-            { name: newCategory, subcategories: [] },
-          ]);
+          setCategories([...categories, { name: formatted, subcategories: [] }]);
           setNewCategory("");
+          alert("Category added!");
         })
         .catch((error) => console.error("Error adding category:", error));
     }
   };
 
-  // Add a new subcategory
+  // Add Subcategory
   const handleAddSubcategory = () => {
-    if (newSubcategory.trim() !== "" && selectedCategory) {
+    const formatted = toTitleCase(newSubcategory.trim());
+    if (formatted !== "" && selectedCategory) {
+      const category = categories.find((cat) => cat.name === selectedCategory);
+      if (category?.subcategories.includes(formatted)) {
+        alert("Subcategory already exists.");
+        return;
+      }
+
       axios
         .post("http://localhost:5000/api/subcategories", {
-          name: newSubcategory,
+          name: formatted,
           categoryId: selectedCategory,
         })
         .then(() => {
@@ -48,69 +57,68 @@ const Categories = () => {
             category.name === selectedCategory
               ? {
                   ...category,
-                  subcategories: [...category.subcategories, newSubcategory],
+                  subcategories: [...category.subcategories, formatted],
                 }
               : category
           );
           setCategories(updatedCategories);
           setNewSubcategory("");
+          alert("Subcategory added!");
         })
         .catch((error) => console.error("Error adding subcategory:", error));
     }
   };
 
-  // Open modal for editing subcategories
+  // Modal
   const handleOpenModal = (category) => {
     setEditingCategory(category);
     setNewSubcategoryInModal("");
     setIsModalOpen(true);
   };
-
-  // Close modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingCategory(null);
   };
 
-  // Add subcategory inside modal
   const handleAddSubcategoryInModal = () => {
-    if (newSubcategoryInModal.trim() !== "") {
+    const formatted = toTitleCase(newSubcategoryInModal.trim());
+    if (formatted !== "") {
+      if (editingCategory.subcategories.includes(formatted)) {
+        alert("Subcategory already exists.");
+        return;
+      }
+
       const updatedCategory = {
         ...editingCategory,
-        subcategories: [
-          ...editingCategory.subcategories,
-          newSubcategoryInModal,
-        ],
+        subcategories: [...editingCategory.subcategories, formatted],
       };
       setEditingCategory(updatedCategory);
       setNewSubcategoryInModal("");
+      alert("Subcategory added in modal!");
     }
   };
 
-  // Delete subcategory inside modal
   const handleDeleteSubcategoryInModal = (subcategory) => {
     const updatedCategory = {
       ...editingCategory,
-      subcategories: editingCategory.subcategories.filter(
-        (sub) => sub !== subcategory
-      ),
+      subcategories: editingCategory.subcategories.filter((sub) => sub !== subcategory),
     };
     setEditingCategory(updatedCategory);
+    alert("Subcategory deleted from modal.");
   };
 
-  // Delete category
   const handleDeleteCategory = (categoryName) => {
+    if (!window.confirm(`Delete category "${categoryName}"?`)) return;
+
     axios
       .delete(`http://localhost:5000/api/categories/${categoryName}`)
       .then(() => {
-        setCategories(
-          categories.filter((category) => category.name !== categoryName)
-        );
+        setCategories(categories.filter((category) => category.name !== categoryName));
+        alert("Category deleted!");
       })
       .catch((error) => console.error("Error deleting category:", error));
   };
 
-  // Delete subcategory
   const handleDeleteSubcategory = (subcategory) => {
     axios
       .delete(`http://localhost:5000/api/subcategories/${subcategory}`)
@@ -119,14 +127,13 @@ const Categories = () => {
           if (category.subcategories.includes(subcategory)) {
             return {
               ...category,
-              subcategories: category.subcategories.filter(
-                (sub) => sub !== subcategory
-              ),
+              subcategories: category.subcategories.filter((sub) => sub !== subcategory),
             };
           }
           return category;
         });
         setCategories(updatedCategories);
+        alert("Subcategory deleted!");
       })
       .catch((error) => console.error("Error deleting subcategory:", error));
   };
@@ -134,13 +141,14 @@ const Categories = () => {
   return (
     <div className="min-h-screen p-1">
       <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
-        {/* Action Header */}
-        <div className=" bg-white flex justify-between items-center border-b z-20">
+
+        {/* Header Actions */}
+        <div className="bg-white flex justify-between items-center border-b z-20 p-4">
           <div className="flex space-x-4">
             <input
               type="text"
               placeholder="New Category Name"
-              className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 mr-4"
+              className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
             />
@@ -151,25 +159,26 @@ const Categories = () => {
               Add Category
             </button>
           </div>
-          <div className="flex space-x-4">
+
+          <div className="flex space-x-2 items-center">
             <select
               className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
               <option value="">Select Category</option>
-              {categories.map((category, idx) => (
-                <option key={idx} value={category.name}>
+              {categories.map((category) => (
+                <option key={category.name} value={category.name}>
                   {category.name}
                 </option>
               ))}
             </select>
             {selectedCategory && (
-              <div className="flex space-x-4">
+              <>
                 <input
                   type="text"
                   placeholder="New Subcategory Name"
-                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2 mr-4"
+                  className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
                   value={newSubcategory}
                   onChange={(e) => setNewSubcategory(e.target.value)}
                 />
@@ -179,34 +188,37 @@ const Categories = () => {
                 >
                   Add Subcategory
                 </button>
-              </div>
+              </>
             )}
           </div>
         </div>
 
-        {/* Categories Table */}
+        {/* Table */}
         <div className="overflow-x-auto p-6 bg-white">
           <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
-            <thead className="sticky top-0 z-10 bg-white">
+            <thead className="sticky top-0 z-10 bg-gray-200 text-gray-800">
               <tr>
-                <th className="border border-gray-200 px-6 py-3">Category</th>
-                <th className="border border-gray-200 px-6 py-3">
-                  Subcategories
-                </th>
-                <th className="border border-gray-200 px-6 py-3">Actions</th>
+                <th className="border border-gray-300 px-6 py-3">Category</th>
+                <th className="border border-gray-300 px-6 py-3">Subcategories</th>
+                <th className="border border-gray-300 px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
               {categories.length > 0 ? (
-                categories.map((category, idx) => (
-                  <tr key={idx}>
+                categories.map((category) => (
+                  <tr key={category.name}>
                     <td className="border border-gray-200 px-6 py-3">
                       {category.name}
                     </td>
-                    <td className="border border-gray-200 px-6 py-3">
-                      {category.subcategories.length > 0
-                        ? category.subcategories.join(", ")
-                        : "No subcategories"}
+                    <td className="border border-gray-200 px-6 py-3 text-left">
+                      <div
+                        className="max-w-xs truncate"
+                        title={category.subcategories.join(", ")}
+                      >
+                        {category.subcategories.length > 0
+                          ? category.subcategories.join(", ")
+                          : "No subcategories"}
+                      </div>
                     </td>
                     <td className="border border-gray-200 px-6 py-3">
                       <button
@@ -228,10 +240,7 @@ const Categories = () => {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="3"
-                    className="border border-gray-200 px-6 py-3 text-center"
-                  >
+                  <td colSpan="3" className="border px-6 py-3 text-center text-gray-500">
                     No categories found.
                   </td>
                 </tr>
@@ -248,13 +257,9 @@ const Categories = () => {
                 Edit Subcategories for {editingCategory.name}
               </h3>
 
-              {/* Scrollable Subcategories Section */}
               <div className="flex-1 overflow-y-auto space-y-2 mb-4">
                 {editingCategory.subcategories.map((sub, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center"
-                  >
+                  <div key={sub} className="flex justify-between items-center">
                     <span className="text-sm">{sub}</span>
                     <button
                       className="text-red-500 text-xs"
@@ -266,7 +271,6 @@ const Categories = () => {
                 ))}
               </div>
 
-              {/* Add New Subcategory */}
               <div className="space-y-4 mb-4">
                 <input
                   type="text"
@@ -283,7 +287,6 @@ const Categories = () => {
                 </button>
               </div>
 
-              {/* Modal Actions */}
               <div className="flex justify-between">
                 <button
                   className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md text-xs hover:bg-gray-400"

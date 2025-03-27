@@ -2,42 +2,13 @@ import React, { useState } from "react";
 
 const UserManagement = () => {
   const [userData, setUserData] = useState([
-    {
-      id: 1,
-      username: "nolly",
-      email: "nolly@gmail.com",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: 2,
-      username: "angelo",
-      email: "angelo@gmail.com",
-      role: "User",
-      status: "Active",
-    },
-    {
-      id: 3,
-      username: "ronald",
-      email: "ronald@gmail.com",
-      role: "User",
-      status: "Inactive",
-    },
-    {
-      id: 4,
-      username: "edan",
-      email: "edan@gmail.com",
-      role: "Admin",
-      status: "Inactive",
-    },
-    {
-      id: 5,
-      username: "jestro",
-      email: "jestro@gmail.com",
-      role: "User",
-      status: "Active",
-    },
+    { id: 1, username: "nolly", email: "nolly@gmail.com", role: "Admin", status: "Active" },
+    { id: 2, username: "angelo", email: "angelo@gmail.com", role: "User", status: "Active" },
+    { id: 3, username: "ronald", email: "ronald@gmail.com", role: "User", status: "Inactive" },
+    { id: 4, username: "edan", email: "edan@gmail.com", role: "Admin", status: "Inactive" },
+    { id: 5, username: "jestro", email: "jestro@gmail.com", role: "User", status: "Active" },
   ]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -55,62 +26,39 @@ const UserManagement = () => {
   };
 
   const handleAddUser = () => {
-    if (
-      !newUser.username ||
-      !newUser.email ||
-      !newUser.role ||
-      !newUser.status
-    ) {
+    if (!newUser.username || !newUser.email || !newUser.role || !newUser.status) {
       alert("Please complete all fields before adding a user.");
       return;
     }
 
-    const newUserWithId = {
-      ...newUser,
-      id: Date.now(), // Generate a temporary unique ID
-    };
-
-    setUserData((prev) => [...prev, newUserWithId]); // Add the new user to the table
+    const newUserWithId = { ...newUser, id: Date.now() };
+    setUserData((prev) => [...prev, newUserWithId]);
     alert("User added successfully!");
-    handleCancel(); // Reset and close the modal
+    handleCancel();
   };
 
   const handleEditUser = (user) => {
     setIsEditing(true);
     setEditingUserId(user.id);
-    setNewUser({
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-    });
+    setNewUser({ username: user.username, email: user.email, role: user.role, status: user.status });
     setIsModalOpen(true);
   };
 
   const handleUpdateUser = () => {
-    if (
-      !newUser.username ||
-      !newUser.email ||
-      !newUser.role ||
-      !newUser.status
-    ) {
+    if (!newUser.username || !newUser.email || !newUser.role || !newUser.status) {
       alert("Please complete all fields before updating the user.");
       return;
     }
 
     setUserData((prev) =>
-      prev.map((user) =>
-        user.id === editingUserId ? { ...user, ...newUser } : user
-      )
+      prev.map((user) => (user.id === editingUserId ? { ...user, ...newUser } : user))
     );
     alert("User updated successfully!");
-    handleCancel(); // Reset and close the modal
+    handleCancel();
   };
 
   const handleDeleteUser = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
     if (confirmDelete) {
       setUserData((prev) => prev.filter((user) => user.id !== id));
       alert("User deleted successfully!");
@@ -121,31 +69,22 @@ const UserManagement = () => {
     setIsModalOpen(false);
     setIsEditing(false);
     setEditingUserId(null);
-    setNewUser({
-      username: "",
-      email: "",
-      role: "",
-      status: "",
-    });
+    setNewUser({ username: "", email: "", role: "", status: "" });
   };
 
   return (
-    <div className="min-h-screen p-1 bg-gray-100">
+    <div className="min-h-screen p-1 bg-gray-200">
       <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden bg-white">
         {/* Top Bar */}
         <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            {/* Search Bar */}
-            <input
-              type="text"
-              placeholder="Search users..."
-              className="w-72 bg-gray-50 border border-gray-300 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="w-72 bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-          {/* Add Button */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-md text-xs hover:bg-blue-700"
@@ -156,38 +95,28 @@ const UserManagement = () => {
 
         {/* Table Section */}
         <div className="p-6 bg-white max-h-[400px] overflow-y-auto">
-          <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
-            <thead className="sticky top-0 z-10 bg-white">
+          <table className="w-full text-xs text-center text-gray-600 border-collapse">
+            <thead className="sticky top-0 z-10 bg-gray-200 text-gray-800 uppercase text-sm">
               <tr>
-                <th className="border border-gray-200 px-6 py-3">Username</th>
-                <th className="border border-gray-200 px-6 py-3">Email</th>
-                <th className="border border-gray-200 px-6 py-3">Role</th>
-                <th className="border border-gray-200 px-6 py-3">Status</th>
-                <th className="border border-gray-200 px-6 py-3">Actions</th>
+                <th className="border border-gray-300 px-6 py-3 rounded-tl-md">Username</th>
+                <th className="border border-gray-300 px-6 py-3">Email</th>
+                <th className="border border-gray-300 px-6 py-3">Role</th>
+                <th className="border border-gray-300 px-6 py-3">Status</th>
+                <th className="border border-gray-300 px-6 py-3 rounded-tr-md">Actions</th>
               </tr>
             </thead>
             <tbody>
               {userData.length > 0 ? (
                 userData
                   .filter((user) =>
-                    user.username
-                      .toLowerCase()
-                      .includes(searchTerm.toLowerCase())
+                    user.username.toLowerCase().includes(searchTerm.toLowerCase())
                   )
                   .map((user) => (
-                    <tr key={user.id}>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {user.username}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {user.email}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {user.role}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {user.status}
-                      </td>
+                    <tr key={user.id} className="hover:bg-gray-50 transition">
+                      <td className="border border-gray-200 px-6 py-3">{user.username}</td>
+                      <td className="border border-gray-200 px-6 py-3">{user.email}</td>
+                      <td className="border border-gray-200 px-6 py-3">{user.role}</td>
+                      <td className="border border-gray-200 px-6 py-3">{user.status}</td>
                       <td className="border border-gray-200 px-6 py-3 space-x-2">
                         <button
                           className="bg-green-600 text-white px-2 py-1 rounded-md text-xs hover:bg-green-700"
@@ -218,7 +147,7 @@ const UserManagement = () => {
           </table>
         </div>
 
-        {/* Add/Edit User Modal */}
+        {/* Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -227,9 +156,7 @@ const UserManagement = () => {
               </h2>
               <form>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Username
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Username</label>
                   <input
                     type="text"
                     name="username"
@@ -239,9 +166,7 @@ const UserManagement = () => {
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Email
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Email</label>
                   <input
                     type="email"
                     name="email"
@@ -264,9 +189,7 @@ const UserManagement = () => {
                   </select>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Status
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Status</label>
                   <select
                     name="status"
                     value={newUser.status}
