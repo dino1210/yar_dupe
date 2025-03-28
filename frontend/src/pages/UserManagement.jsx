@@ -73,8 +73,8 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="min-h-screen p-1 bg-gray-200">
-      <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden bg-white">
+    <div className="min-h-screen w-full p-4 bg-gray-100">
+      <div className="w-full bg-white shadow-lg rounded-lg overflow-hidden">
         {/* Top Bar */}
         <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
           <input
@@ -84,7 +84,6 @@ const UserManagement = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-md text-xs hover:bg-blue-700"
@@ -94,15 +93,15 @@ const UserManagement = () => {
         </div>
 
         {/* Table Section */}
-        <div className="p-6 bg-white max-h-[400px] overflow-y-auto">
+        <div className="p-6 bg-white max-h-[75vh] overflow-y-auto">
           <table className="w-full text-xs text-center text-gray-600 border-collapse">
             <thead className="sticky top-0 z-10 bg-gray-200 text-gray-800 uppercase text-sm">
               <tr>
-                <th className="border border-gray-300 px-6 py-3 rounded-tl-md">Username</th>
+                <th className="border border-gray-300 px-6 py-3">Username</th>
                 <th className="border border-gray-300 px-6 py-3">Email</th>
                 <th className="border border-gray-300 px-6 py-3">Role</th>
                 <th className="border border-gray-300 px-6 py-3">Status</th>
-                <th className="border border-gray-300 px-6 py-3 rounded-tr-md">Actions</th>
+                <th className="border border-gray-300 px-6 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -135,10 +134,7 @@ const UserManagement = () => {
                   ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="5"
-                    className="border border-gray-200 px-6 py-3 text-center"
-                  >
+                  <td colSpan="5" className="border px-6 py-3 text-center text-gray-500">
                     No users found.
                   </td>
                 </tr>
@@ -149,8 +145,8 @@ const UserManagement = () => {
 
         {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
               <h2 className="text-lg font-bold mb-4 text-center">
                 {isEditing ? "Edit User" : "Add New User"}
               </h2>
@@ -188,7 +184,7 @@ const UserManagement = () => {
                     <option value="User">User</option>
                   </select>
                 </div>
-                <div className="mb-4">
+                <div className="mb-6">
                   <label className="block text-sm font-medium mb-1">Status</label>
                   <select
                     name="status"
@@ -212,7 +208,7 @@ const UserManagement = () => {
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+                    className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                   >
                     Cancel
                   </button>

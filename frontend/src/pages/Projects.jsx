@@ -73,9 +73,10 @@ const Projects = () => {
   );
 
   return (
-    <div className="min-h-screen p-1 overflow-x-hidden relative">
-      <div className="max-w-7xl mx-auto flex flex-wrap shadow-lg rounded-lg overflow-hidden bg-white">
-        {/* Left Container (Project List) */}
+    <div className="min-h-screen w-full p-4 bg-gray-100 overflow-x-hidden">
+      <div className="w-full flex flex-wrap shadow-lg rounded-lg overflow-hidden bg-white">
+
+        {/* Left Panel */}
         <div className="w-full sm:w-2/3 lg:w-3/4 p-6 space-y-4">
           <div className="border-b pb-4 flex justify-between items-center">
             <h2 className="text-xl font-semibold text-gray-700">Projects</h2>
@@ -91,7 +92,7 @@ const Projects = () => {
             </select>
           </div>
 
-          <div className="space-y-4 max-h-[350px] overflow-y-auto">
+          <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2">
             {filteredProjects.length === 0 ? (
               <p className="text-center text-gray-500">No projects found.</p>
             ) : (
@@ -107,9 +108,7 @@ const Projects = () => {
                       onClick={() => toggleExpand(project.id)}
                     >
                       <div>
-                        <h2 className="text-sm font-semibold text-gray-800">
-                          {project.title}
-                        </h2>
+                        <h2 className="text-sm font-semibold text-gray-800">{project.title}</h2>
                         <p className="text-xs text-gray-600">
                           <strong>Creator:</strong> {project.creator}
                         </p>
@@ -165,14 +164,15 @@ const Projects = () => {
           </div>
         </div>
 
-        {/* Right Container (Search Bar) */}
-        <div className="w-full sm:w-1/3 lg:w-1/4 p-6 h-full">
-          <div className="p-6 bg-white shadow-md rounded-lg h-full flex flex-col justify-between">
-            <h3 className="text-sm font-medium text-gray-700">Search Project</h3>
+        {/* Right Panel (Search Only) */}
+        <div className="w-full sm:w-1/3 lg:w-1/4 p-6 bg-gray-50">
+          <div className="bg-white shadow-md rounded-lg p-4 flex flex-col space-y-4">
+            <h3 className="text-md font-semibold text-gray-800">Search Project</h3>
+
             <input
               type="text"
-              placeholder="Search..."
-              className="w-full p-3 border border-gray-300 rounded-lg mt-4 text-gray-700 mb-6"
+              placeholder="Search by title..."
+              className="w-full p-2 border border-gray-300 rounded-md text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

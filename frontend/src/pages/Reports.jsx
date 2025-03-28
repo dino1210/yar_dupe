@@ -8,7 +8,6 @@ const ReportsPage = () => {
   const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch reports data
   useEffect(() => {
     const fetchReports = async () => {
       setIsLoading(true);
@@ -27,7 +26,6 @@ const ReportsPage = () => {
     fetchReports();
   }, [startDate, endDate]);
 
-  // Headers for CSV export
   const csvHeaders = [
     { label: "Category", key: "category" },
     { label: "Name", key: "name" },
@@ -43,13 +41,13 @@ const ReportsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen w-full bg-gray-100 p-4">
+      <div className="w-full bg-white shadow-md rounded-lg overflow-hidden">
+
         {/* Filters */}
-        <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            {/* Date Filters */}
-            <div className="flex items-center space-x-2">
+        <div className="sticky top-0 z-10 bg-white border-b px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Start Date:</label>
               <input
                 type="date"
@@ -58,7 +56,7 @@ const ReportsPage = () => {
                 className="border border-gray-300 rounded-lg px-3 py-2 text-xs"
               />
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <label className="text-sm font-medium">End Date:</label>
               <input
                 type="date"
@@ -68,7 +66,7 @@ const ReportsPage = () => {
               />
             </div>
           </div>
-          {/* Export Button */}
+
           <CSVLink
             data={reportsData}
             headers={csvHeaders}
@@ -80,79 +78,40 @@ const ReportsPage = () => {
         </div>
 
         {/* Table Section */}
-        <div className="p-6 bg-white max-h-[500px] overflow-y-auto">
+        <div className="p-4 bg-white max-h-[80vh] overflow-y-auto">
           {isLoading ? (
-            <div className="text-center">Loading...</div>
+            <div className="text-center text-sm text-gray-600">Loading...</div>
           ) : (
             <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
-              <thead className="sticky top-0 z-10 bg-white">
+              <thead className="sticky top-0 z-10 bg-gray-100 text-gray-800 shadow-sm">
                 <tr>
-                  <th className="border border-gray-200 px-6 py-3">Category</th>
-                  <th className="border border-gray-200 px-6 py-3">Name</th>
-                  <th className="border border-gray-200 px-6 py-3">Tag/Code</th>
-                  <th className="border border-gray-200 px-6 py-3">Quantity</th>
-                  <th className="border border-gray-200 px-6 py-3">Unit</th>
-                  <th className="border border-gray-200 px-6 py-3">Remarks</th>
-                  <th className="border border-gray-200 px-6 py-3">
-                    Checked Out By
-                  </th>
-                  <th className="border border-gray-200 px-6 py-3">Project</th>
-                  <th className="border border-gray-200 px-6 py-3">
-                    Project Site
-                  </th>
-                  <th className="border border-gray-200 px-6 py-3">
-                    Checked Out Date
-                  </th>
-                  <th className="border border-gray-200 px-6 py-3">
-                    Checked In Date
-                  </th>
+                  {csvHeaders.map((header) => (
+                    <th key={header.key} className="border border-gray-200 px-4 py-2">
+                      {header.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {reportsData.length > 0 ? (
                   reportsData.map((report, index) => (
-                    <tr key={index}>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.category}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.name}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.tag}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.quantity}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.unit}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.remarks}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.checkedOutBy}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.project}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.projectSite}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.checkedOutDate}
-                      </td>
-                      <td className="border border-gray-200 px-6 py-3">
-                        {report.checkedInDate}
-                      </td>
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="border px-4 py-2">{report.category}</td>
+                      <td className="border px-4 py-2">{report.name}</td>
+                      <td className="border px-4 py-2">{report.tag}</td>
+                      <td className="border px-4 py-2">{report.quantity}</td>
+                      <td className="border px-4 py-2">{report.unit}</td>
+                      <td className="border px-4 py-2">{report.remarks}</td>
+                      <td className="border px-4 py-2">{report.checkedOutBy}</td>
+                      <td className="border px-4 py-2">{report.project}</td>
+                      <td className="border px-4 py-2">{report.projectSite}</td>
+                      <td className="border px-4 py-2">{report.checkedOutDate}</td>
+                      <td className="border px-4 py-2">{report.checkedInDate}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan="11"
-                      className="border border-gray-200 px-6 py-3 text-center"
-                    >
+                    <td colSpan="11" className="border px-4 py-4 text-center text-gray-500">
                       No reports found.
                     </td>
                   </tr>

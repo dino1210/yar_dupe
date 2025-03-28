@@ -11,7 +11,6 @@ const Categories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch categories
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/categories")
@@ -22,7 +21,6 @@ const Categories = () => {
   const toTitleCase = (str) =>
     str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
 
-  // Add Category
   const handleAddCategory = () => {
     const formatted = toTitleCase(newCategory.trim());
     if (formatted !== "") {
@@ -37,7 +35,6 @@ const Categories = () => {
     }
   };
 
-  // Add Subcategory
   const handleAddSubcategory = () => {
     const formatted = toTitleCase(newSubcategory.trim());
     if (formatted !== "" && selectedCategory) {
@@ -69,12 +66,12 @@ const Categories = () => {
     }
   };
 
-  // Modal
   const handleOpenModal = (category) => {
     setEditingCategory(category);
     setNewSubcategoryInModal("");
     setIsModalOpen(true);
   };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingCategory(null);
@@ -119,32 +116,13 @@ const Categories = () => {
       .catch((error) => console.error("Error deleting category:", error));
   };
 
-  const handleDeleteSubcategory = (subcategory) => {
-    axios
-      .delete(`http://localhost:5000/api/subcategories/${subcategory}`)
-      .then(() => {
-        const updatedCategories = categories.map((category) => {
-          if (category.subcategories.includes(subcategory)) {
-            return {
-              ...category,
-              subcategories: category.subcategories.filter((sub) => sub !== subcategory),
-            };
-          }
-          return category;
-        });
-        setCategories(updatedCategories);
-        alert("Subcategory deleted!");
-      })
-      .catch((error) => console.error("Error deleting subcategory:", error));
-  };
-
   return (
-    <div className="min-h-screen p-1">
-      <div className="max-w-7xl mx-auto shadow-lg rounded-lg overflow-hidden">
+    <div className="min-h-screen w-full bg-gray-100 p-4">
+      <div className="w-full bg-white shadow rounded-lg overflow-hidden">
 
         {/* Header Actions */}
-        <div className="bg-white flex justify-between items-center border-b z-20 p-4">
-          <div className="flex space-x-4">
+        <div className="flex justify-between items-center border-b p-4 flex-wrap gap-2 bg-white">
+          <div className="flex flex-wrap gap-2">
             <input
               type="text"
               placeholder="New Category Name"
@@ -160,7 +138,7 @@ const Categories = () => {
             </button>
           </div>
 
-          <div className="flex space-x-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center">
             <select
               className="bg-gray-50 border border-gray-300 text-sm rounded-lg p-2"
               value={selectedCategory}
@@ -194,7 +172,7 @@ const Categories = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto p-6 bg-white">
+        <div className="overflow-x-auto p-4 bg-white">
           <table className="w-full text-xs text-center text-gray-600 border-collapse border border-gray-200">
             <thead className="sticky top-0 z-10 bg-gray-200 text-gray-800">
               <tr>
@@ -207,9 +185,7 @@ const Categories = () => {
               {categories.length > 0 ? (
                 categories.map((category) => (
                   <tr key={category.name}>
-                    <td className="border border-gray-200 px-6 py-3">
-                      {category.name}
-                    </td>
+                    <td className="border border-gray-200 px-6 py-3 font-medium">{category.name}</td>
                     <td className="border border-gray-200 px-6 py-3 text-left">
                       <div
                         className="max-w-xs truncate"
@@ -259,10 +235,15 @@ const Categories = () => {
 
               <div className="flex-1 overflow-y-auto space-y-2 mb-4">
                 {editingCategory.subcategories.map((sub, index) => (
-                  <div key={sub} className="flex justify-between items-center">
-                    <span className="text-sm">{sub}</span>
+                  <div
+                    key={sub}
+                    className="flex justify-between items-center px-3 py-1 bg-gray-50 rounded hover:bg-gray-100"
+                  >
+                    <span className="text-sm">
+                      <span className="font-medium text-gray-500 mr-2">{index + 1}.</span> {sub}
+                    </span>
                     <button
-                      className="text-red-500 text-xs"
+                      className="text-xs text-red-600 hover:text-red-800 hover:underline"
                       onClick={() => handleDeleteSubcategoryInModal(sub)}
                     >
                       Delete

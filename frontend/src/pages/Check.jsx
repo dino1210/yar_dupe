@@ -303,8 +303,8 @@ const Check = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-start p-6">
-      <div className="w-full max-w-7xl bg-white shadow-lg rounded-lg p-6">
+   <div className="min-h-screen w-full bg-gray-100 p-4">
+  <div className="w-full bg-white shadow-md rounded-lg p-4">
 
         {/* Top Bar */}
         <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex justify-between items-center flex-wrap gap-2">
