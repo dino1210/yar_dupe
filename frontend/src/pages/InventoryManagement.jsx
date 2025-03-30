@@ -118,18 +118,19 @@ const InventoryManagement = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <select
-              className="bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="All">All Categories</option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.name}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+           <select
+  className="bg-gray-50 border border-gray-300 text-xs rounded-lg p-2.5"
+  value={selectedCategory}
+  onChange={(e) => setSelectedCategory(e.target.value)}
+>
+  <option value="All">All Categories</option>
+  {categories.map((category) => (
+    <option key={category.id} value={category.name}>
+      {category.name}
+    </option>
+  ))}
+</select>
+
           </div>
           <button
             onClick={() => {
@@ -167,7 +168,13 @@ const InventoryManagement = () => {
                         <td className="border border-gray-300 px-4 py-3 text-center">{index + 1}</td>
                         <td className="border border-gray-300 px-4 py-3 text-center">
                           {item.image ? (
-                            <img src={item.image} alt={item.name} className="h-10 mx-auto" />
+                            <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-24 w-auto object-contain mx-auto"
+                          />
+                          
+                          
                           ) : (
                             "--"
                           )}
@@ -221,60 +228,146 @@ const InventoryManagement = () => {
               {isEditing ? "Edit Inventory Item" : "Add New Inventory Item"}
             </h2>
             <form>
-              {Object.keys(defaultNewItem).map((key) => (
-                <div key={key} className="mb-2">
-                  <label className="block text-sm font-medium">
-                    {key.charAt(0).toUpperCase() + key.slice(1)}
-                  </label>
-                  {key === "date" ? (
-                    <input
-                      type="date"
-                      name={key}
-                      value={newItem[key]}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    />
-                  ) : key === "image" ? (
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setNewItem((prev) => ({ ...prev, image: reader.result }));
-                        };
-                        if (file) reader.readAsDataURL(file);
-                      }}
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    />
-                  ) : (
-                    <input
-                      name={key}
-                      value={newItem[key]}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-lg p-2"
-                    />
-                  )}
-                </div>
-              ))}
-              <div className="flex justify-end space-x-4 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAddItem}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  {isEditing ? "Save Changes" : "Add Item"}
-                </button>
-              </div>
-            </form>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* Row 1 */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Category</label>
+      <input
+        name="category"
+        value={newItem.category}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">Name</label>
+      <input
+        name="name"
+        value={newItem.name}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+
+    {/* Row 2 */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Brand</label>
+      <input
+        name="brand"
+        value={newItem.brand}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">Specs</label>
+      <input
+        name="specs"
+        value={newItem.specs}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+
+    {/* Row 3 */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Pricing</label>
+      <input
+        name="pricing"
+        value={newItem.pricing}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">Durability</label>
+      <input
+        name="durability"
+        value={newItem.durability}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+
+    {/* Row 4 */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Tag</label>
+      <input
+        name="tag"
+        value={newItem.tag}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">Quantity</label>
+      <input
+        name="quantity"
+        value={newItem.quantity}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+
+    {/* Row 5 */}
+    <div>
+      <label className="block text-sm font-medium mb-1">Date</label>
+      <input
+        type="date"
+        name="date"
+        value={newItem.date}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium mb-1">Remarks</label>
+      <input
+        name="remarks"
+        value={newItem.remarks}
+        onChange={handleInputChange}
+        className="w-full border border-gray-300 rounded-lg p-2"
+      />
+    </div>
+  </div>
+
+  {/* Image Upload - full width */}
+  <div className="mt-4">
+    <label className="block text-sm font-medium mb-1">Image</label>
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setNewItem((prev) => ({ ...prev, image: reader.result }));
+        };
+        if (file) reader.readAsDataURL(file);
+      }}
+      className="w-full border border-gray-300 rounded-lg p-2"
+    />
+  </div>
+
+  {/* Buttons */}
+  <div className="flex justify-end space-x-4 mt-6">
+    <button
+      type="button"
+      onClick={() => setIsModalOpen(false)}
+      className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      onClick={handleAddItem}
+      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+    >
+      {isEditing ? "Save Changes" : "Add Item"}
+    </button>
+  </div>
+</form>
+
           </div>
         </div>
       )}
